@@ -110,7 +110,7 @@ main{max-width:620px;margin:auto;padding:10px 11px 245px}
  <div class="targets" id="targets"></div>
 
  <div class="progress">
-  <div class="progress-top"><span>Current hunt</span><b id="count">0 / 15</b></div>
+  <div class="progress-top"><span>Current round</span><b id="count">0 / 15 turns</b></div>
   <div class="bar"><i id="bar"></i></div>
  </div>
 
@@ -131,10 +131,12 @@ main{max-width:620px;margin:auto;padding:10px 11px 245px}
 <div class="controls">
  <div class="controls-inner">
   <div class="entry-row">
-   <div class="move-now"><small>Turn</small><b id="turn">1</b></div>
+   <div class="move-now"><small id="turnLabel">TURN</small><b id="turn">1</b></div>
    <div class="display" id="display">—</div>
    <button class="keypad back" onclick="backspace()">⌫</button>
- </div>
+  </div>
+
+ <div id="coachHint" class="coach-hint"></div>
 
  <div class="specials" id="specials">
    <button class="special" data-type="coach" onclick="chooseSpecial('coach')">COACH <small>2 available</small></button>
@@ -145,17 +147,17 @@ main{max-width:620px;margin:auto;padding:10px 11px 245px}
  <div class="keypad">
   <button onclick="digit('1')">1</button><button onclick="digit('2')">2</button><button onclick="digit('3')">3</button><button onclick="digit('4')">4</button>
   <button onclick="digit('5')">5</button><button onclick="digit('6')">6</button><button onclick="digit('7')">7</button><button onclick="digit('8')">8</button>
-  <button onclick="digit('9')">9</button><button onclick="digit('0')">0</button><button class="clear" onclick="clearEntry()">CLEAR</button><button class="add" onclick="addMove()">ADD ✓</button>
+  <button onclick="digit('9')">9</button><button onclick="digit('0')">0</button><button class="clear" onclick="clearEntry()">CLEAR</button><button class="add" id="addButton" onclick="addMove()">ADD ✓</button>
  </div>
  </div>
 </div>
 
 <script>
-const KEY='whitehall-jack-tracker-v2';
-const types=['coach','alley','boat'];
+const KEY='whitehall-jack-tracker-v3';
 let state=load()||fresh();
 let entry='';
 let special=null;
+let coachFirst=null;
 
 function fresh(){
  return {
@@ -176,7 +178,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 function render(){
  const r=state.rounds[state.round-1];
  document.getElementById('roundBadge').textContent='ROUND '+state.round;
- document.getElementById('count').textContent=r.moves.length+' / 15';
+ document.getElementById('count').textContent=r.moves.length+' / 15 turns';
  document.getElementById('bar').style.width=(r.moves.length/15*100)+'%';
  document.getElementById('turn').textContent=Math.min(r.moves.length+1,15);
 
@@ -189,9 +191,11 @@ function render(){
 
  document.getElementById('moves').innerHTML=Array.from({length:15},(_,i)=>{
    let v=r.moves[i],s=r.special[i];
+   let first=v?.[0]??'';
    return `<div class="move ${v?'':'empty'} ${i===r.moves.length?'current':''} ${s?'special':''}"
      onclick="${v?`editMove(${i})`:''}">
-     <span class="n">${i+1}</span><span class="v">${v||'—'}</span>
+     <span class="n">${i+1}</span>
+     <span class="v">${first||'—'}</span>
      ${s?`<span class="s">${s}</span>`:''}
    </div>`;
  }).join('');
@@ -199,62 +203,172 @@ function render(){
  document.querySelectorAll('.special').forEach(btn=>{
    const t=btn.dataset.type, remaining=2-state.used[t];
    btn.classList.toggle('selected',special===t);
-   btn.classList.toggle('used',remaining===0);
+   btn.classList.toggle('used',remaining===0 && special!==t);
    btn.querySelector('small').textContent=remaining+' available';
  });
- document.getElementById('display').textContent=entry||'—';
+
+ const display = coachFirst!==null ? (entry ? coachFirst+' → '+entry : coachFirst+' → ?') : (entry||'—');
+ document.getElementById('display').textContent=display;
+ document.getElementById('turnLabel').textContent=coachFirst!==null?'COACH':'TURN';
+ document.getElementById('coachHint').textContent =
+   special==='coach'
+   ? (coachFirst===null ? 'Coach: enter the first circle, then the second.' : 'Coach: enter the second circle.')
+   : '';
+ document.getElementById('addButton').textContent = special==='coach' && coachFirst!==null ? 'FINISH COACH ✓' : 'ADD ✓';
 }
 function digit(d){if(entry.length<3){entry+=d;render()}}
-function backspace(){entry=entry.slice(0,-1);render()}
-function clearEntry(){entry='';special=null;render()}
+function backspace(){
+ entry=entry.slice(0,-1);
+ render();
+}
+function clearEntry(){
+ entry='';coachFirst=null;special=null;render();
+}
 function chooseSpecial(t){
  const remaining=2-state.used[t];
  if(remaining<=0){toast('No '+t+' tiles left');return}
- special=special===t?null:t; render();
+ if(special===t){special=null;coachFirst=null;entry='';render();return}
+ special=t;coachFirst=null;entry='';render();
+}
+function currentLocation(){
+ const r=state.rounds[state.round-1];
+ if(r.moves.length) return r.moves[r.moves.length-1][0];
+ return r.start || (state.round===1 ? state.targets[0] : '');
+}
+function isDiscovery(n){
+ return state.targets.some(x=>x!=='' && String(x)===String(n));
+}
+function isCurrentLocation(n){
+ const c=currentLocation();
+ return c!=='' && String(c)===String(n);
 }
 function addMove(){
  const r=state.rounds[state.round-1];
- if(!entry){toast('Enter the destination number');return}
  if(r.moves.length>=15){toast('15 turns reached — finish the round');return}
+ if(!entry){toast('Enter the destination number');return}
  const n=Number(entry);
- if(n<0||n>189){toast('Use a circle number from 0–189');return}
- if(special && state.used[special]>=2){toast('No '+special+' tiles left');return}
- r.moves.push(String(n));
+ if(!Number.isInteger(n)||n<0||n>189){toast('Use a circle number from 0–189');return}
+
+ // Coach is a double move: two separate movement spaces.
+ if(special==='coach'){
+   if(coachFirst===null){
+     if(isCurrentLocation(n)){toast('Coach must move away from the starting circle');return}
+     if(isDiscovery(n)){toast('A Coach cannot enter a Discovery Location');return}
+     coachFirst=String(n);
+     entry='';
+     render();
+     return;
+   }
+   if(String(n)===String(coachFirst)){toast('Coach circles must be different');return}
+   if(isCurrentLocation(n)){toast('Coach cannot return to the starting circle');return}
+   if(isDiscovery(n)){toast('A Coach cannot enter a Discovery Location');return}
+   if(r.moves.length>13){toast('Coach needs two movement spaces');return}
+
+   r.moves.push([String(coachFirst)]);
+   r.special.push('coach');
+   r.moves.push([String(n)]);
+   r.special.push('coach-continue');
+   state.used.coach++;
+   entry='';coachFirst=null;special=null;save();render();
+   return;
+ }
+
+ // Alley / Boat: one movement space. Special movements cannot enter
+ // Discovery Locations; the final move into a Discovery must be normal.
+ if(special==='alley' || special==='boat'){
+   if(isDiscovery(n)){toast('A special movement cannot enter a Discovery Location');return}
+ }
+
+ // Jack cannot remain on the same numbered circle for consecutive turns.
+ if(isCurrentLocation(n)){toast('Jack must move to a different circle');return}
+
+ r.moves.push([String(n)]);
  r.special.push(special);
  if(special)state.used[special]++;
  entry='';special=null;save();render();
- if(r.moves.length===15)toast('15 turns reached');
+
+ // Reaching a Discovery Location with a normal move ends the round.
+ if(!special && isDiscovery(n) && String(n)!==(state.targets[0]||'')){
+   setTimeout(()=>offerDiscovery(n),50);
+ }
+}
+function offerDiscovery(n){
+ const r=state.rounds[state.round-1];
+ if(!r.moves.length || String(r.moves[r.moves.length-1][0])!==String(n)) return;
+ if(state.round>=3){
+   toast('Final Discovery reached — Jack wins!');
+   return;
+ }
+ if(confirm('Discovery Location reached: '+n+'\\nStart the next round?')){
+   startNextRound();
+ }
+}
+function startNextRound(){
+ const r=state.rounds[state.round-1];
+ if(state.round>=3)return;
+ const finalLoc=r.moves[r.moves.length-1][0];
+ state.round++;
+ state.rounds[state.round-1].start=finalLoc;
+ entry='';special=null;coachFirst=null;save();render();
 }
 function editMove(i){
  const r=state.rounds[state.round-1];
- // Remove the selected move and everything after it, allowing quick correction.
- for(let j=i;j<r.moves.length;j++){
-   if(r.special[j])state.used[r.special[j]]--;
+ const s=r.special[i]||null;
+
+ if(s==='coach'){
+   const first=r.moves[i]?.[0]??'';
+   const second=r.moves[i+1]?.[0]??'';
+   state.used.coach--;
+   r.moves=r.moves.slice(0,i);
+   r.special=r.special.slice(0,i);
+   special='coach'; coachFirst=first; entry=second;
+ } else if(s==='coach-continue'){
+   const first=r.moves[i-1]?.[0]??'';
+   const second=r.moves[i]?.[0]??'';
+   state.used.coach--;
+   r.moves=r.moves.slice(0,i-1);
+   r.special=r.special.slice(0,i-1);
+   special='coach'; coachFirst=first; entry=second;
+ } else {
+   const val=r.moves[i]?.[0]??'';
+   if(s)state.used[s]--;
+   r.moves=r.moves.slice(0,i);
+   r.special=r.special.slice(0,i);
+   special=s; coachFirst=null; entry=val;
  }
- entry=r.moves[i];
- special=r.special[i]||null;
- r.moves=r.moves.slice(0,i);r.special=r.special.slice(0,i);
  save();render();
 }
 function undo(){
  const r=state.rounds[state.round-1];
  if(!r.moves.length){toast('Nothing to undo');return}
- const s=r.special.pop();r.moves.pop();if(s)state.used[s]--;
- entry='';special=null;save();render();
+ const s=r.special[r.special.length-1];
+ if(s==='coach-continue'){
+   r.moves.pop();r.special.pop();
+   r.moves.pop();r.special.pop();
+   state.used.coach--;
+ } else {
+   r.moves.pop();r.special.pop();
+   if(s)state.used[s]--;
+ }
+ entry='';special=null;coachFirst=null;save();render();
 }
 function finishRound(){
  const r=state.rounds[state.round-1];
- if(!r.moves.length){toast('Add at least one move first');return}
- if(state.round>=3){toast('That is the final round — all four locations reached!');return}
- if(!confirm('Start the next round? Make sure the new Discovery Location has been announced.'))return;
- state.round++;
- const next=state.rounds[state.round-1];
- next.start=r.moves[r.moves.length-1];
- entry='';special=null;save();render();
+ if(!r.moves.length){toast('Add at least one turn first');return}
+ if(state.round>=3){toast('Final Discovery reached — Jack wins!');return}
+ const finalLoc=String(r.moves[r.moves.length-1][0]);
+ const isNewDiscovery=state.targets.some((x,i)=>i>0 && x!=='' && String(x)===finalLoc);
+ if(!isNewDiscovery){
+   toast('The last movement is not a Discovery Location');
+   return;
+ }
+ if(confirm('Start the next round from Discovery Location '+finalLoc+'?')){
+   startNextRound();
+ }
 }
 function resetGame(){
  if(!confirm('Erase the whole tracker and start a new game?'))return;
- state=fresh();entry='';special=null;save();render();
+ state=fresh();entry='';special=null;coachFirst=null;save();render();
 }
 function toast(t){
  const x=document.getElementById('toast');x.textContent=t;x.style.display='block';
@@ -265,9 +379,18 @@ render();
 
 <script>
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js"));
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
 }
 </script>
 
 </body>
+
+<style>
+.move .arrow{color:#777;font-size:12px}
+.coach-hint{height:16px;text-align:center;color:#d7b45c;font-size:10px;font-weight:700}
+.move .v{white-space:nowrap}
+</style>
+
 </html>
