@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#111111">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<title>Whitehall Mystery — Jack</title>
+<title>Whitehall Mystery Jack Tracker</title>
 <style>
 :root{--bg:#101010;--card:#1c1c1c;--card2:#292929;--line:#414141;--text:#f5f5f5;--muted:#a7a7a7;--gold:#d7b45c;--green:#79bb8d;--blue:#6d98c8;--red:#d86b6b}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -23,7 +23,7 @@ main{max-width:650px;margin:auto;padding:8px 10px 345px}
 .setup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 .drop-input{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px;min-height:54px}
 .drop-input.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
-.drop-input.done{border-color:var(--green)}
+.drop-input.done{border-color:var(--green);box-shadow:0 0 0 1px var(--green) inset}
 .drop-input.available{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset}
 .drop-input small{display:block;color:var(--muted);font-size:9px;font-weight:700;margin-bottom:3px}
 .drop-number{font-size:22px;font-weight:900;text-align:center;min-height:27px}
@@ -64,7 +64,7 @@ main{max-width:650px;margin:auto;padding:8px 10px 345px}
 </head>
 <body>
 <header><div class="header">
- <div><h1>Whitehall Mystery</h1><div class="subtitle">Jack movement tracker</div></div>
+ <div><h1>Whitehall Mystery Jack Tracker</h1><div class="subtitle">Jack movement tracker</div></div>
  <div class="badge" id="badge">SETUP</div>
 </div></header>
 
@@ -132,11 +132,25 @@ function renderSetup(){
  document.getElementById('badge').textContent=state.currentRound?'ROUND '+state.currentRound:'SETUP';
  document.getElementById('setupGrid').innerHTML=state.drops.map((v,i)=>`<button class="drop-input ${selectedDrop===i?'active':''} ${v?'done':''}" onclick="selectDrop(${i})"><small>Discovery ${i+1}</small><div class="drop-number">${v||'—'}</div><div class="drop-status">${selectedDrop===i?'ENTERING…':v?'SET':'Tap to enter'}</div></button>`).join('');
  const ready=allDrops();
- document.getElementById('startGrid').innerHTML=state.drops.map((v,i)=>`<button class="start-btn" ${ready?'':'disabled'} onclick="chooseStart(${i})">${v||'—'}</button>`).join('');
+ document.getElementById('startGrid').innerHTML=state.drops.map((v,i)=>`<button class="start-btn ${state.start&&String(state.start)===String(v)?'selected':''}" ${ready?'':'disabled'} onclick="chooseStart(${i})">${v||'—'}</button>`).join('');
  document.getElementById('startHint').textContent=!ready?'Enter all four locations first.':state.start?'Starting at '+state.start:'Tap Jack’s starting location';
 }
 function selectDrop(i){if(state.currentRound)return;selectedDrop=i;entry='';render()}
-function chooseStart(i){if(!allDrops())return;state.start=state.drops[i];state.currentRound=1;state.rounds[0].start=state.start;viewedRound=1;selectedDrop=null;entry='';save();render()}
+function chooseStart(i){
+ if(!allDrops())return;
+ state.start=state.drops[i];
+ if(!Array.isArray(state.usedDrops))state.usedDrops=[];
+ const firstDrop=String(state.start);
+ if(!state.usedDrops.includes(firstDrop))state.usedDrops.push(firstDrop);
+ state.currentRound=1;
+ state.rounds[0].start=state.start;
+ state.rounds[0].reached=firstDrop;
+ viewedRound=1;
+ selectedDrop=null;
+ entry='';
+ save();
+ render();
+}
 function renderGame(){
  document.getElementById('badge').textContent='ROUND '+viewedRound;
  document.getElementById('compactDrops').innerHTML=state.drops.map((v,i)=>{
@@ -144,7 +158,7 @@ function renderGame(){
    const loc=String(currentLocation(state.rounds[viewedRound-1]));
    const live=viewedRound===state.currentRound&&!state.rounds[viewedRound-1].complete;
    const available=live&&!used&&state.rounds[viewedRound-1].moves.length>0&&loc===String(v);
-   return `<button class="drop-input ${used?'done':''} ${available?'available':''}" onclick="tryDrop(${i})"><small>Discovery ${i+1}</small><div class="drop-number">${v}</div><div class="drop-status">${used?'DROPPED':available?'DROP HERE':'POSSIBLE LOCATION'}</div></button>`;
+   return `<button class="drop-input ${used?'done':''} ${available?'available':''}" onclick="tryDrop(${i})"><small>Discovery ${i+1}</small><div class="drop-number">${v}</div><div class="drop-status">${used?(String(v)===String(state.start)&&viewedRound===1?'START · DROPPED':'DROPPED'):available?'DROP HERE':'POSSIBLE LOCATION'}</div></button>`;
  }).join('');
  document.getElementById('tabs').innerHTML=state.rounds.map((r,i)=>`<button class="tab ${viewedRound===i+1?'active':''}" ${i+1>state.currentRound?'disabled':''} onclick="viewRound(${i+1})">Round ${i+1}${r.complete?' ✓':''}</button>`).join('');
  renderRound();
