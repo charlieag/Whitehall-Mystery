@@ -46,7 +46,7 @@ main{max-width:650px;margin:auto;padding:8px 10px 345px}
 .cell .turn{position:absolute;top:3px;left:4px;font-size:7px;color:#666;font-weight:800}.cell .num{font-size:17px;font-weight:900;margin-top:5px}
 .cell.zero{border-color:#777;background:#181818}.cell.zero .turn{color:var(--gold)}.cell.zero .num{font-size:19px}
 .cell.current{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
-.cell.possible{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset}
+.cell.possible{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset;cursor:pointer}.cell.possible:active{transform:scale(.98);filter:brightness(1.15)}
 .cell.reached{border-color:var(--green);background:#172219}.cell.reached .num{color:#cdebd5}
 .cell .marker{position:absolute;right:4px;bottom:3px;font-size:7px;color:var(--blue);font-weight:900}.cell.reached .marker{color:var(--green)}
 .history-note{text-align:center;color:var(--muted);font-size:9px;margin-top:6px}
@@ -175,7 +175,8 @@ function renderRound(){
    const isReached=r.complete&&String(n)===String(r.reached);
    const clickable=isDrop&&live;
    const tag=clickable?'button':'div';
-   const click=clickable?` onclick="tryDropAtTracker(${JSON.stringify(String(n))})"`:'';
+   const safeLocation=String(n).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+   const click=clickable?` onclick="tryDropAtTracker('${safeLocation}')"`:'';
    movementCells+=`<${tag} class="cell ${!n?'empty':''} ${live&&i===r.moves.length+1?'current':''} ${isDrop?'possible':''} ${isReached?'reached':''}"${click}>
      <span class="turn">${i}</span><span class="num">${n||'—'}</span>
      ${isDrop?'<span class="marker">DROP</span>':''}${isReached?'<span class="marker">DROPPED</span>':''}
