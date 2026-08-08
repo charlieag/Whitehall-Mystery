@@ -18,17 +18,18 @@ header{position:sticky;top:0;z-index:20;background:rgba(16,16,16,.98);padding:ca
 .header{max-width:650px;margin:auto;display:flex;align-items:center;justify-content:space-between}
 h1{font-size:18px;line-height:1.1;margin:0;font-weight:900}.subtitle{font-size:10px;color:var(--muted);margin-top:2px}
 .badge{background:var(--gold);color:#111;border-radius:8px;padding:6px 8px;font-size:11px;font-weight:900}
-main{max-width:650px;margin:auto;padding:9px 10px 350px}
-.title{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:900;margin:8px 2px 5px}
+main{max-width:650px;margin:auto;padding:8px 10px 345px}
+.title{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:900;margin:7px 2px 5px}
 .setup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 .drop-input{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px;min-height:54px}
 .drop-input.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
 .drop-input.done{border-color:var(--green)}
+.drop-input.available{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset}
 .drop-input small{display:block;color:var(--muted);font-size:9px;font-weight:700;margin-bottom:3px}
 .drop-number{font-size:22px;font-weight:900;text-align:center;min-height:27px}
 .drop-status{text-align:center;font-size:8px;color:var(--muted);margin-top:2px}
-.setup-start{margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:8px}
-.setup-start h2{font-size:12px;margin:0 0 6px}.start-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.start-panel{margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:8px}
+.start-panel h2{font-size:12px;margin:0 0 6px}.start-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
 .start-btn{border:1px solid #555;background:var(--card2);color:white;border-radius:9px;padding:8px 2px;font-weight:850;font-size:12px}
 .start-btn.selected{background:var(--gold);color:#111;border-color:var(--gold)}.start-btn:disabled{opacity:.3}
 .start-hint{text-align:center;color:var(--muted);font-size:10px;margin-top:6px}
@@ -36,34 +37,26 @@ main{max-width:650px;margin:auto;padding:9px 10px 350px}
 .tab{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:9px;padding:7px 3px;font-size:11px;font-weight:850}
 .tab.active{background:var(--gold);border-color:var(--gold);color:#111}.tab:disabled{opacity:.3}
 .round-info{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 9px;margin-top:6px;font-size:11px}
-.round-info strong{font-size:14px}
-.track{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px}
-.cell{min-height:51px;background:var(--card);border:1px solid var(--line);border-radius:8px;position:relative;display:flex;align-items:center;justify-content:center}
-.cell .turn{position:absolute;top:3px;left:4px;font-size:7px;color:#666;font-weight:800}
-.cell .num{font-size:17px;font-weight:900;margin-top:5px}
+.round-info strong{font-size:14px}.start-box{color:var(--gold);font-weight:850}
+.track{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:6px}
+.cell{min-height:54px;background:var(--card);border:1px solid var(--line);border-radius:8px;position:relative;display:flex;align-items:center;justify-content:center}
+.cell .turn{position:absolute;top:3px;left:4px;font-size:7px;color:#666;font-weight:800}.cell .num{font-size:17px;font-weight:900;margin-top:5px}
 .cell.zero{border-color:#777;background:#181818}.cell.zero .turn{color:var(--gold)}.cell.zero .num{font-size:19px}
 .cell.current{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
 .cell.possible{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset}
-.cell.reached{border-color:var(--green);background:#172219}
-.cell.reached .num{color:#cdebd5}
-.cell .marker{position:absolute;right:4px;bottom:3px;font-size:7px;color:var(--blue);font-weight:900}
-.cell.reached .marker{color:var(--green)}
-.drop-action{margin-top:7px;background:#18221b;border:1px solid #38533f;border-radius:10px;padding:7px}
-.drop-action-title{font-size:10px;font-weight:900;margin-bottom:5px}
-.drop-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-.drop-btn{border:1px solid #486650;background:#243329;color:#d9f0df;border-radius:8px;padding:7px 2px;font-size:10px;font-weight:850}
-.drop-btn:disabled{opacity:.28}
-.drop-btn.done{background:#31523b;border-color:#79bb8d}
+.cell.reached{border-color:var(--green);background:#172219}.cell.reached .num{color:#cdebd5}
+.cell .marker{position:absolute;right:4px;bottom:3px;font-size:7px;color:var(--blue);font-weight:900}.cell.reached .marker{color:var(--green)}
 .history-note{text-align:center;color:var(--muted);font-size:9px;margin-top:6px}
+.drop-prompt{margin-top:7px;background:#18221b;border:1px solid #38533f;border-radius:10px;padding:7px;text-align:center;color:#d9f0df;font-size:10px;font-weight:850}
+.drop-prompt.used{background:var(--card);border-color:var(--line);color:var(--muted)}
 .bottom-actions{display:flex;gap:5px;margin-top:6px}.bottom-actions button{flex:1;border:0;border-radius:8px;padding:7px;background:var(--card2);color:white;font-size:10px;font-weight:800}.bottom-actions .danger{color:#ffb4b4}
 .controls{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(16,16,16,.99);border-top:1px solid #444;padding:7px 9px calc(8px + env(safe-area-inset-bottom))}
-.controls-inner{max-width:650px;margin:auto}
-.entry-row{display:flex;gap:5px}.entry{flex:1;min-height:42px;background:#080808;border:2px solid var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900}.placeholder{color:#555}.back{width:48px;border:0;border-radius:9px;background:var(--card2);color:white;font-size:16px;font-weight:900}
+.controls-inner{max-width:650px;margin:auto}.entry-row{display:flex;gap:5px}.entry{flex:1;min-height:42px;background:#080808;border:2px solid var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900}.placeholder{color:#555}.back{width:48px;border:0;border-radius:9px;background:var(--card2);color:white;font-size:16px;font-weight:900}
 .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:5px}.key{min-height:37px;border:0;border-radius:8px;background:#303030;color:white;font-size:19px;font-weight:900}.key.clear{font-size:10px}.add{width:100%;margin-top:5px;min-height:38px;border:0;border-radius:8px;background:var(--gold);color:#111;font-size:13px;font-weight:900}
 .status{text-align:center;min-height:12px;color:var(--muted);font-size:9px;margin-top:3px}
 .toast{position:fixed;left:50%;bottom:330px;transform:translateX(-50%);z-index:50;background:#eee;color:#111;border-radius:9px;padding:8px 11px;font-size:11px;font-weight:900;display:none;white-space:nowrap;box-shadow:0 4px 18px #0008}
 .hidden{display:none!important}
-@media(min-width:520px){.track{grid-template-columns:repeat(8,1fr)}main{padding-bottom:315px}}
+@media(min-width:520px){.track{grid-template-columns:repeat(5,1fr)}main{padding-bottom:315px}}
 </style>
 </head>
 <body>
@@ -76,7 +69,7 @@ main{max-width:650px;margin:auto;padding:9px 10px 350px}
  <section id="setup">
   <div class="title">1 · Body drop locations</div>
   <div class="setup-grid" id="setupGrid"></div>
-  <div class="setup-start" id="startPanel">
+  <div class="start-panel">
    <h2>2 · Where does Jack start?</h2>
    <div class="start-grid" id="startGrid"></div>
    <div class="start-hint" id="startHint">Enter all four locations first.</div>
@@ -99,13 +92,13 @@ main{max-width:650px;margin:auto;padding:9px 10px 350px}
   <button class="key" onclick="digit('7')">7</button><button class="key" onclick="digit('8')">8</button><button class="key" onclick="digit('9')">9</button>
   <button class="key clear" onclick="clearEntry()">CLEAR</button><button class="key" onclick="digit('0')">0</button><button class="key" onclick="backspace()">⌫</button>
  </div>
- <button class="add" id="addBtn" onclick="addMovement()">ADD MOVEMENT</button>
+ <button class="add" id="addBtn" onclick="addAction()">ADD MOVEMENT</button>
  <div class="status" id="status">Enter a number</div>
 </div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const KEY='whitehall-jack-v7',MAX=15;
+const KEY='whitehall-jack-v8',MAX=15;
 let state=load()||newGame(),entry='',selectedDrop=null,viewedRound=1;
 
 function newGame(){return{drops:['','','',''],start:'',rounds:[{start:'',moves:[],complete:false,reached:''},{start:'',moves:[],complete:false,reached:''},{start:'',moves:[],complete:false,reached:''}],currentRound:0}}
@@ -113,60 +106,74 @@ function load(){try{const s=JSON.parse(localStorage.getItem(KEY));return s&&Arra
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 function allDrops(){return state.drops.every(x=>/^\d{1,3}$/.test(String(x))&&Number(x)>=0&&Number(x)<=189)}
-function gameStarted(){return state.currentRound>0}
 function active(){return state.rounds[state.currentRound-1]}
 function currentLocation(r){return r.moves.length?r.moves[r.moves.length-1]:r.start}
-function render(){renderSetup();if(gameStarted()){document.getElementById('setup').classList.add('hidden');document.getElementById('game').classList.remove('hidden');renderGame()}else{document.getElementById('setup').classList.remove('hidden');document.getElementById('game').classList.add('hidden')}updateEntry()}
+function usedDropsBefore(roundNumber){return state.rounds.slice(0,roundNumber-1).map(r=>String(r.reached)).filter(Boolean)}
+function unusedDropIndexAtLocation(loc,roundNumber){const used=usedDropsBefore(roundNumber);return state.drops.findIndex((d,i)=>String(d)===String(loc)&&!used.includes(String(d)))}
+function render(){renderSetup();if(state.currentRound){document.getElementById('setup').classList.add('hidden');document.getElementById('game').classList.remove('hidden');renderGame()}else{document.getElementById('setup').classList.remove('hidden');document.getElementById('game').classList.add('hidden')}updateEntry()}
 function renderSetup(){
- document.getElementById('badge').textContent=gameStarted()?'ROUND '+state.currentRound:'SETUP';
+ document.getElementById('badge').textContent=state.currentRound?'ROUND '+state.currentRound:'SETUP';
  document.getElementById('setupGrid').innerHTML=state.drops.map((v,i)=>`<button class="drop-input ${selectedDrop===i?'active':''} ${v?'done':''}" onclick="selectDrop(${i})"><small>Discovery ${i+1}</small><div class="drop-number">${v||'—'}</div><div class="drop-status">${selectedDrop===i?'ENTERING…':v?'SET':'Tap to enter'}</div></button>`).join('');
  const ready=allDrops();
  document.getElementById('startGrid').innerHTML=state.drops.map((v,i)=>`<button class="start-btn" ${ready?'':'disabled'} onclick="chooseStart(${i})">${v||'—'}</button>`).join('');
  document.getElementById('startHint').textContent=!ready?'Enter all four locations first.':state.start?'Starting at '+state.start:'Tap Jack’s starting location';
 }
-function selectDrop(i){if(gameStarted())return;selectedDrop=i;entry='';render()}
+function selectDrop(i){if(state.currentRound)return;selectedDrop=i;entry='';render()}
 function chooseStart(i){if(!allDrops())return;state.start=state.drops[i];state.currentRound=1;state.rounds[0].start=state.start;viewedRound=1;selectedDrop=null;entry='';save();render()}
 function renderGame(){
  document.getElementById('badge').textContent='ROUND '+viewedRound;
- document.getElementById('compactDrops').innerHTML=state.drops.map((v,i)=>`<button class="drop-input ${state.rounds.some((r,ri)=>ri<viewedRound&&r.reached===v)?'done':''}" onclick="focusDrop(${i})"><small>Discovery ${i+1}</small><div class="drop-number">${v}</div></button>`).join('');
+ document.getElementById('compactDrops').innerHTML=state.drops.map((v,i)=>{
+   const used=usedDropsBefore(viewedRound).includes(String(v));
+   const loc=String(currentLocation(state.rounds[viewedRound-1]));
+   const live=viewedRound===state.currentRound&&!state.rounds[viewedRound-1].complete;
+   const available=live&&!used&&state.rounds[viewedRound-1].moves.length>0&&loc===String(v);
+   return `<button class="drop-input ${used?'done':''} ${available?'available':''}" onclick="tryDrop(${i})"><small>Discovery ${i+1}</small><div class="drop-number">${v}</div><div class="drop-status">${used?'DROPPED':available?'DROP HERE':'POSSIBLE LOCATION'}</div></button>`;
+ }).join('');
  document.getElementById('tabs').innerHTML=state.rounds.map((r,i)=>`<button class="tab ${viewedRound===i+1?'active':''}" ${i+1>state.currentRound?'disabled':''} onclick="viewRound(${i+1})">Round ${i+1}${r.complete?' ✓':''}</button>`).join('');
  renderRound();
 }
-function focusDrop(i){const r=state.rounds[viewedRound-1];if(!r.complete&&viewedRound===state.currentRound){const n=state.drops[i];if(String(currentLocation(r))===String(n))dropBody(i);else toast('Jack is not at '+n)}}
-function viewRound(n){if(n>state.currentRound)return;viewedRound=n;entry='';selectedDrop=null;render()}
+function viewRound(n){if(n>state.currentRound)return;viewedRound=n;entry='';render()}
 function renderRound(){
  const r=state.rounds[viewedRound-1],live=viewedRound===state.currentRound&&!r.complete;
+ let cells=`<div class="cell zero"><span class="turn">0</span><span class="num">${r.start||'—'}</span></div>`;
+ for(let i=1;i<=MAX;i++){
+   const n=r.moves[i-1]||'',used=usedDropsBefore(viewedRound).includes(String(n)),isDrop=state.drops.includes(n)&&!used,isReached=r.complete&&String(n)===String(r.reached);
+   cells+=`<div class="cell ${!n?'empty':''} ${live&&i===r.moves.length+1?'current':''} ${isDrop?'possible':''} ${isReached?'reached':''}"><span class="turn">${i}</span><span class="num">${n||'—'}</span>${isDrop?'<span class="marker">DROP</span>':''}${isReached?'<span class="marker">DROPPED</span>':''}</div>`;
+ }
+ const prompt=live&&r.moves.length>0?(()=>{
+   const idx=unusedDropIndexAtLocation(currentLocation(r),viewedRound);
+   if(idx<0)return `<div class="drop-prompt used">Current location is not an unused body-drop location.</div>`;
+   return `<div class="drop-prompt">Jack is at Discovery ${idx+1} (${state.drops[idx]}) — tap it above if the body part is dropped here.</div>`;
+ })():'';
  document.getElementById('roundView').innerHTML=`
- <div class="round-info"><span>${r.complete?'Completed':'Start: '+(r.start||'—')}</span><strong>${r.moves.length} / ${MAX}</strong></div>
- <div class="track">${Array.from({length:MAX+1},(_,i)=>{
-   if(i===0)return `<div class="cell zero"><span class="turn">0</span><span class="num">${r.start||'—'}</span></div>`;
-   const n=r.moves[i-1]||'',possible=state.drops.includes(n),reached=r.complete&&String(n)===String(r.reached);
-   return `<div class="cell ${!n?'empty':''} ${live&&i===r.moves.length+1?'current':''} ${possible?'possible':''} ${reached?'reached':''}"><span class="turn">${i}</span><span class="num">${n||'—'}</span>${possible?`<span class="marker">${reached?'DROPPED':'DROP'}</span>`:''}</div>`;
- }).join('')}</div>
- ${live?renderDropActions(r):`<div class="history-note">Body part dropped at ${r.reached||'—'} · archived for review</div>`}
+ <div class="round-info"><span class="start-box">0 = ${r.start||'—'}</span><strong>${r.moves.length} / ${MAX}</strong></div>
+ <div class="track">${cells}</div>
+ ${prompt}
+ ${!live?`<div class="history-note">Body part dropped at ${r.reached||'—'} · archived for review</div>`:''}
  <div class="bottom-actions">${live?'<button onclick="undo()">↶ Undo last</button>':''}<button class="danger" onclick="resetGame()">Reset game</button></div>`;
 }
-function renderDropActions(r){
- const loc=currentLocation(r);
- return `<div class="drop-action"><div class="drop-action-title">Body part dropped here?</div><div class="drop-row">${state.drops.map((d,i)=>`<button class="drop-btn ${String(loc)===String(d)?'':'disabled'}" ${String(loc)===String(d)?'':'disabled'} onclick="dropBody(${i})">D${i+1} · ${d}</button>`).join('')}</div></div>`;
+function tryDrop(i){
+ const r=state.rounds[state.currentRound-1],target=state.drops[i];
+ if(viewedRound!==state.currentRound||r.complete)return;
+ if(r.moves.length===0){toast('You must move before dropping a body part');return}
+ if(String(currentLocation(r))!==String(target)){toast('Jack is not at '+target);return}
+ if(usedDropsBefore(state.currentRound).includes(String(target))){toast('That body-drop location has already been used');return}
+ dropBody(i);
 }
-function updateEntry(){const e=document.getElementById('entry');e.textContent=entry||'—';e.classList.toggle('placeholder',!entry);let activeInput=!gameStarted()?selectedDrop!==null:(viewedRound===state.currentRound&&!active().complete);document.getElementById('addBtn').textContent=!gameStarted()?'SET LOCATION':'ADD MOVEMENT';document.getElementById('status').textContent=!gameStarted()?(selectedDrop===null?'Tap a Discovery box first':'Enter its circle number'):activeInput?(active().moves.length>=MAX?'15 movements reached':'Enter the next circle number'):'Viewing completed round'}
-function digit(d){
- if(!gameStarted()){
-   if(selectedDrop===null||entry.length>=3)return;
-   entry+=d;updateEntry();return;
- }
- const r=active();if(viewedRound!==state.currentRound||r.complete||r.moves.length>=MAX||entry.length>=3)return;
- entry+=d;updateEntry();
+function dropBody(i){
+ const r=active(),target=state.drops[i];
+ if(usedDropsBefore(state.currentRound).includes(String(target))){toast('That body-drop location has already been used');return}
+ r.complete=true;r.reached=String(target);save();
+ if(state.currentRound<3){state.currentRound++;state.rounds[state.currentRound-1].start=r.reached;viewedRound=state.currentRound;entry='';save();render();toast('Body part dropped — next round started')}
+ else{entry='';save();render();toast('All body parts dropped — Jack wins!')}
 }
-function backspace(){entry=entry.slice(0,-1);updateEntry()}
-function clearEntry(){entry='';updateEntry()}
-function addMovement(){
- if(!gameStarted()){
+function addAction(){
+ if(!state.currentRound){
    if(selectedDrop===null){toast('Tap a Discovery box first');return}
    if(!entry){toast('Enter a circle number');return}
    const n=Number(entry);if(!Number.isInteger(n)||n<0||n>189){toast('Use a number from 0–189');return}
-   state.drops[selectedDrop]=String(n);entry='';save();render();return;
+   if(state.drops.some((d,i)=>i!==selectedDrop&&String(d)===String(n))){toast('Each Discovery Location must be different');return}
+   state.drops[selectedDrop]=String(n);entry='';save();render();return
  }
  const r=active();if(viewedRound!==state.currentRound||r.complete)return;
  if(!entry){toast('Enter a circle number');return}
@@ -176,22 +183,20 @@ function addMovement(){
  r.moves.push(String(n));entry='';save();render();
  if(r.moves.length===MAX)toast('15 movements reached');
 }
-function dropBody(i){
- const r=active(),target=state.drops[i],loc=currentLocation(r);
- if(viewedRound!==state.currentRound||r.complete)return;
- if(String(loc)!==String(target)){toast('Jack is not at '+target);return}
- if(i===0&&viewedRound===1){toast('Discovery 1 is not a later drop location');return}
- if(state.rounds.some((rr,ri)=>ri<viewedRound&&String(rr.reached)===String(target))){toast('That location has already been used');return}
- r.complete=true;r.reached=String(target);save();
- if(state.currentRound<3){
-   state.currentRound++;
-   state.rounds[state.currentRound-1].start=r.reached;
-   viewedRound=state.currentRound;entry='';save();render();toast('Body part dropped — next round started');
- }else{entry='';save();render();toast('All body parts dropped — Jack wins!')}
+function digit(d){
+ if(!state.currentRound){if(selectedDrop===null||entry.length>=3)return;entry+=d;updateEntry();return}
+ const r=active();if(viewedRound!==state.currentRound||r.complete||r.moves.length>=MAX||entry.length>=3)return;entry+=d;updateEntry()
+}
+function backspace(){entry=entry.slice(0,-1);updateEntry()}
+function clearEntry(){entry='';updateEntry()}
+function updateEntry(){
+ const e=document.getElementById('entry');e.textContent=entry||'—';e.classList.toggle('placeholder',!entry);
+ document.getElementById('addBtn').textContent=!state.currentRound?'SET LOCATION':'ADD MOVEMENT';
+ document.getElementById('status').textContent=!state.currentRound?(selectedDrop===null?'Tap a Discovery box first':'Enter its circle number'):(viewedRound===state.currentRound&&!active().complete?(active().moves.length>=MAX?'15 movements reached':'Enter the next circle number'):'Viewing completed round')
 }
 function undo(){const r=active();if(!r.moves.length){toast('Nothing to undo');return}r.moves.pop();entry='';save();render()}
 function resetGame(){if(!confirm('Reset the whole game? This will erase all drop locations and movement history.'))return;state=newGame();entry='';selectedDrop=null;viewedRound=1;save();render()}
-document.addEventListener('keydown',e=>{if(e.key>='0'&&e.key<='9')digit(e.key);else if(e.key==='Backspace')backspace();else if(e.key==='Escape')clearEntry();else if(e.key==='Enter')addMovement()});
+document.addEventListener('keydown',e=>{if(e.key>='0'&&e.key<='9')digit(e.key);else if(e.key==='Backspace')backspace();else if(e.key==='Escape')clearEntry();else if(e.key==='Enter')addAction()});
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 render();
 </script>
