@@ -8,141 +8,190 @@
 <meta name="theme-color" content="#111111">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<title>Whitehall Mystery — Jack Tracker</title>
+<title>Whitehall Mystery — Jack</title>
 <style>
-:root{--bg:#101010;--card:#1c1c1c;--card2:#292929;--line:#414141;--text:#f5f5f5;--muted:#a7a7a7;--gold:#d7b45c;--green:#78b98b;--red:#d86b6b}
+:root{--bg:#101010;--card:#1c1c1c;--card2:#292929;--line:#414141;--text:#f5f5f5;--muted:#a7a7a7;--gold:#d7b45c;--green:#79bb8d;--blue:#6d98c8;--red:#d86b6b}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body{min-height:100vh}button,input{-webkit-appearance:none;font:inherit}button{touch-action:manipulation}
-header{position:sticky;top:0;z-index:20;background:rgba(16,16,16,.98);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;border-bottom:1px solid #333}
-.header{max-width:640px;margin:auto;display:flex;justify-content:space-between;align-items:center}
-h1{font-size:19px;line-height:1.1;margin:0;font-weight:850}.subtitle{font-size:11px;color:var(--muted);margin-top:3px}
-.round-badge{background:var(--gold);color:#111;border-radius:9px;padding:7px 9px;font-size:12px;font-weight:900;white-space:nowrap}
-main{max-width:640px;margin:auto;padding:10px 11px 390px}
-.section-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:850;margin:11px 2px 6px}
-.discovery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.discovery{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:5px;text-align:center}
-.discovery small{display:block;color:var(--muted);font-size:9px;margin-bottom:3px}
-.discovery input{width:100%;background:#0b0b0b;border:1px solid #555;color:white;border-radius:7px;padding:5px 2px;text-align:center;font-size:18px;font-weight:850;outline:0}
-.discovery input:focus{border-color:var(--gold)}
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:5px}
-.tab{background:var(--card);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px 4px;font-size:12px;font-weight:800}
-.tab.active{background:var(--gold);color:#111;border-color:var(--gold)}.tab:disabled{opacity:.35}
-.round-info{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px;margin-top:7px}
-.info-row{display:flex;justify-content:space-between;align-items:center;font-size:12px}.info-row strong{font-size:15px}
-.progress{height:7px;background:#090909;border-radius:99px;overflow:hidden;margin-top:7px}.progress i{display:block;height:100%;background:var(--gold)}
-.track{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:8px}
-.cell{min-height:53px;background:var(--card);border:1px solid var(--line);border-radius:9px;display:flex;align-items:center;justify-content:center;position:relative}
-.cell .turn{position:absolute;top:4px;left:5px;color:#666;font-size:8px;font-weight:700}.cell .num{font-size:18px;font-weight:900;margin-top:6px}
-.cell.empty .num{color:#444}.cell.current{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}.cell.reached{border-color:var(--green)}
-.history-note{text-align:center;color:var(--muted);font-size:11px;margin:9px 0}
-.drop-panel{background:#19221b;border:1px solid #385340;border-radius:12px;padding:9px;margin-top:8px}
-.drop-title{font-size:12px;font-weight:850;margin-bottom:6px}.drop-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.drop{background:#243329;color:#d9f0df;border:1px solid #486650;border-radius:9px;padding:8px 2px;font-size:11px;font-weight:800}.drop:disabled{opacity:.3}
-.utility{display:flex;gap:6px;margin-top:8px}.utility button{flex:1;background:var(--card2);color:white;border:0;border-radius:9px;padding:9px;font-size:12px;font-weight:750}.utility .danger{color:#ffb4b4}
-.controls{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(16,16,16,.985);border-top:1px solid #444;padding:8px 10px calc(9px + env(safe-area-inset-bottom))}
-.controls-inner{max-width:640px;margin:auto}.entry-row{display:flex;gap:6px;align-items:stretch}
-.entry{flex:1;min-height:48px;background:#080808;border:2px solid var(--gold);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;letter-spacing:.03em}
-.entry.placeholder{color:#555}.action-small{width:54px;border:0;border-radius:10px;background:var(--card2);color:white;font-size:16px;font-weight:800}
-.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:7px}.key{min-height:44px;border:0;border-radius:10px;background:#303030;color:white;font-size:21px;font-weight:850}
-.key.clear{font-size:12px}.key.back{font-size:17px}.add{width:100%;margin-top:7px;min-height:44px;border:0;border-radius:10px;background:var(--gold);color:#111;font-size:15px;font-weight:900}
-.status{text-align:center;min-height:14px;color:var(--muted);font-size:10px;margin-top:5px}
-.toast{position:fixed;left:50%;bottom:335px;transform:translateX(-50%);z-index:50;background:#eee;color:#111;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:850;display:none;white-space:nowrap;box-shadow:0 4px 20px #0008}
-@media(min-width:520px){.track{grid-template-columns:repeat(8,1fr)}main{padding-bottom:340px}}
+body{min-height:100vh}button,input{font:inherit;-webkit-appearance:none}button{touch-action:manipulation}
+header{position:sticky;top:0;z-index:20;background:rgba(16,16,16,.98);padding:calc(9px + env(safe-area-inset-top)) 11px 8px;border-bottom:1px solid #333}
+.header{max-width:650px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+h1{font-size:18px;line-height:1.1;margin:0;font-weight:900}.subtitle{font-size:10px;color:var(--muted);margin-top:2px}
+.badge{background:var(--gold);color:#111;border-radius:8px;padding:6px 8px;font-size:11px;font-weight:900}
+main{max-width:650px;margin:auto;padding:9px 10px 350px}
+.title{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:900;margin:8px 2px 5px}
+.setup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.drop-input{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px;min-height:54px}
+.drop-input.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.drop-input.done{border-color:var(--green)}
+.drop-input small{display:block;color:var(--muted);font-size:9px;font-weight:700;margin-bottom:3px}
+.drop-number{font-size:22px;font-weight:900;text-align:center;min-height:27px}
+.drop-status{text-align:center;font-size:8px;color:var(--muted);margin-top:2px}
+.setup-start{margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:8px}
+.setup-start h2{font-size:12px;margin:0 0 6px}.start-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.start-btn{border:1px solid #555;background:var(--card2);color:white;border-radius:9px;padding:8px 2px;font-weight:850;font-size:12px}
+.start-btn.selected{background:var(--gold);color:#111;border-color:var(--gold)}.start-btn:disabled{opacity:.3}
+.start-hint{text-align:center;color:var(--muted);font-size:10px;margin-top:6px}
+.round-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:6px}
+.tab{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:9px;padding:7px 3px;font-size:11px;font-weight:850}
+.tab.active{background:var(--gold);border-color:var(--gold);color:#111}.tab:disabled{opacity:.3}
+.round-info{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 9px;margin-top:6px;font-size:11px}
+.round-info strong{font-size:14px}
+.track{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px}
+.cell{min-height:51px;background:var(--card);border:1px solid var(--line);border-radius:8px;position:relative;display:flex;align-items:center;justify-content:center}
+.cell .turn{position:absolute;top:3px;left:4px;font-size:7px;color:#666;font-weight:800}
+.cell .num{font-size:17px;font-weight:900;margin-top:5px}
+.cell.zero{border-color:#777;background:#181818}.cell.zero .turn{color:var(--gold)}.cell.zero .num{font-size:19px}
+.cell.current{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.cell.possible{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset}
+.cell.reached{border-color:var(--green);background:#172219}
+.cell.reached .num{color:#cdebd5}
+.cell .marker{position:absolute;right:4px;bottom:3px;font-size:7px;color:var(--blue);font-weight:900}
+.cell.reached .marker{color:var(--green)}
+.drop-action{margin-top:7px;background:#18221b;border:1px solid #38533f;border-radius:10px;padding:7px}
+.drop-action-title{font-size:10px;font-weight:900;margin-bottom:5px}
+.drop-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.drop-btn{border:1px solid #486650;background:#243329;color:#d9f0df;border-radius:8px;padding:7px 2px;font-size:10px;font-weight:850}
+.drop-btn:disabled{opacity:.28}
+.drop-btn.done{background:#31523b;border-color:#79bb8d}
+.history-note{text-align:center;color:var(--muted);font-size:9px;margin-top:6px}
+.bottom-actions{display:flex;gap:5px;margin-top:6px}.bottom-actions button{flex:1;border:0;border-radius:8px;padding:7px;background:var(--card2);color:white;font-size:10px;font-weight:800}.bottom-actions .danger{color:#ffb4b4}
+.controls{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(16,16,16,.99);border-top:1px solid #444;padding:7px 9px calc(8px + env(safe-area-inset-bottom))}
+.controls-inner{max-width:650px;margin:auto}
+.entry-row{display:flex;gap:5px}.entry{flex:1;min-height:42px;background:#080808;border:2px solid var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900}.placeholder{color:#555}.back{width:48px;border:0;border-radius:9px;background:var(--card2);color:white;font-size:16px;font-weight:900}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:5px}.key{min-height:37px;border:0;border-radius:8px;background:#303030;color:white;font-size:19px;font-weight:900}.key.clear{font-size:10px}.add{width:100%;margin-top:5px;min-height:38px;border:0;border-radius:8px;background:var(--gold);color:#111;font-size:13px;font-weight:900}
+.status{text-align:center;min-height:12px;color:var(--muted);font-size:9px;margin-top:3px}
+.toast{position:fixed;left:50%;bottom:330px;transform:translateX(-50%);z-index:50;background:#eee;color:#111;border-radius:9px;padding:8px 11px;font-size:11px;font-weight:900;display:none;white-space:nowrap;box-shadow:0 4px 18px #0008}
+.hidden{display:none!important}
+@media(min-width:520px){.track{grid-template-columns:repeat(8,1fr)}main{padding-bottom:315px}}
 </style>
 </head>
 <body>
 <header><div class="header">
- <div><h1>Whitehall Mystery</h1><div class="subtitle">Jack movement tracker · v6</div></div>
- <div class="round-badge" id="badge">ROUND 1</div>
+ <div><h1>Whitehall Mystery</h1><div class="subtitle">Jack movement tracker</div></div>
+ <div class="badge" id="badge">SETUP</div>
 </div></header>
 
 <main>
- <div class="section-label">Discovery locations</div>
- <div class="discovery-grid" id="discoveries"></div>
- <div class="section-label">Rounds</div>
- <div class="tabs" id="tabs"></div>
- <div id="roundView"></div>
+ <section id="setup">
+  <div class="title">1 · Body drop locations</div>
+  <div class="setup-grid" id="setupGrid"></div>
+  <div class="setup-start" id="startPanel">
+   <h2>2 · Where does Jack start?</h2>
+   <div class="start-grid" id="startGrid"></div>
+   <div class="start-hint" id="startHint">Enter all four locations first.</div>
+  </div>
+ </section>
+
+ <section id="game" class="hidden">
+  <div class="title">Body drop locations</div>
+  <div class="setup-grid" id="compactDrops"></div>
+  <div class="round-tabs" id="tabs"></div>
+  <div id="roundView"></div>
+ </section>
 </main>
 
 <div class="controls"><div class="controls-inner">
- <div class="entry-row"><div class="entry placeholder" id="entry">—</div><button class="action-small" onclick="backspace()">⌫</button></div>
+ <div class="entry-row"><div class="entry placeholder" id="entry">—</div><button class="back" onclick="backspace()">⌫</button></div>
  <div class="keypad">
   <button class="key" onclick="digit('1')">1</button><button class="key" onclick="digit('2')">2</button><button class="key" onclick="digit('3')">3</button>
   <button class="key" onclick="digit('4')">4</button><button class="key" onclick="digit('5')">5</button><button class="key" onclick="digit('6')">6</button>
   <button class="key" onclick="digit('7')">7</button><button class="key" onclick="digit('8')">8</button><button class="key" onclick="digit('9')">9</button>
-  <button class="key clear" onclick="clearEntry()">CLEAR</button><button class="key" onclick="digit('0')">0</button><button class="key back" onclick="backspace()">⌫</button>
+  <button class="key clear" onclick="clearEntry()">CLEAR</button><button class="key" onclick="digit('0')">0</button><button class="key" onclick="backspace()">⌫</button>
  </div>
- <button class="add" onclick="addMove()">ADD MOVEMENT</button>
- <div class="status" id="status">Enter the next circle number</div>
+ <button class="add" id="addBtn" onclick="addMovement()">ADD MOVEMENT</button>
+ <div class="status" id="status">Enter a number</div>
 </div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const KEY='whitehall-jack-clean-v1',MAX_MOVES=15;
-let state=load()||newGame(),entry='',viewedRound=1;
+const KEY='whitehall-jack-v7',MAX=15;
+let state=load()||newGame(),entry='',selectedDrop=null,viewedRound=1;
 
-function newGame(){return{discoveries:['','','',''],rounds:[{moves:[],complete:false,reached:''},{moves:[],complete:false,reached:''},{moves:[],complete:false,reached:''}],currentRound:1}}
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));return s&&Array.isArray(s.rounds)&&s.rounds.length===3?s:null}catch(e){return null}}
+function newGame(){return{drops:['','','',''],start:'',rounds:[{start:'',moves:[],complete:false,reached:''},{start:'',moves:[],complete:false,reached:''},{start:'',moves:[],complete:false,reached:''}],currentRound:0}}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));return s&&Array.isArray(s.drops)&&Array.isArray(s.rounds)&&s.rounds.length===3?s:null}catch(e){return null}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-function activeRound(){return state.rounds[state.currentRound-1]}
-function currentLocation(){const r=activeRound();return r.moves.length?r.moves[r.moves.length-1]:(state.currentRound===1?state.discoveries[0]:'')}
-function render(){renderDiscoveries();renderTabs();renderRound();updateEntry()}
-function renderDiscoveries(){document.getElementById('discoveries').innerHTML=state.discoveries.map((v,i)=>`<div class="discovery"><small>Discovery ${i+1}</small><input inputmode="numeric" maxlength="3" value="${esc(v)}" onchange="setDiscovery(${i},this.value)"></div>`).join('')}
-function setDiscovery(i,v){state.discoveries[i]=String(v).replace(/\D/g,'').slice(0,3);save();render()}
-function renderTabs(){document.getElementById('tabs').innerHTML=state.rounds.map((r,i)=>{const n=i+1;return `<button class="tab ${n===viewedRound?'active':''}" ${n>state.currentRound?'disabled':''} onclick="viewRound(${n})">Round ${n}${r.complete?' ✓':''}</button>`}).join('')}
-function viewRound(n){if(n>state.currentRound)return;viewedRound=n;entry='';render()}
-function discoveryIndex(v){const i=state.discoveries.findIndex(x=>String(x)===String(v));return i>=0?i+1:'?'}
-function renderRound(){
- const r=state.rounds[viewedRound-1],current=state.currentRound===viewedRound&&!r.complete,count=r.moves.length;
- document.getElementById('badge').textContent='ROUND '+viewedRound;
- let h=`<div class="round-info"><div class="info-row"><span>${r.complete?'Completed':'Movements'}</span><strong>${count} / ${MAX_MOVES}</strong></div><div class="progress"><i style="width:${Math.min(100,count/MAX_MOVES*100)}%"></i></div>`;
- if(r.complete)h+=`<div class="history-note">Body part dropped at Discovery ${discoveryIndex(r.reached)} · ${r.reached}</div>`;
- else h+=`<div class="history-note">Starting location: ${viewedRound===1?(state.discoveries[0]||'—'):(state.rounds[viewedRound-2].reached||'—')}</div>`;
- h+=`</div><div class="track">`;
- for(let i=0;i<MAX_MOVES;i++)h+=`<div class="cell ${r.moves[i]?'':'empty'} ${current&&i===r.moves.length?'current':''}"><span class="turn">${i+1}</span><span class="num">${r.moves[i]||'—'}</span></div>`;
- h+=`</div>`;
- if(current){
-  const buttons=state.discoveries.map((d,i)=>{
-   const valid=d&&i>0&&String(d)===String(currentLocation());
-   const used=state.rounds.some((rr,ri)=>ri<viewedRound&&String(rr.reached)===String(d));
-   return `<button class="drop" ${valid&&!used?'':'disabled'} onclick="dropBody(${i})">${i+1}: ${d||'—'}</button>`;
-  }).join('');
-  h+=`<div class="drop-panel"><div class="drop-title">Body part dropped?</div><div class="drop-buttons">${buttons}</div></div><div class="utility"><button onclick="undo()">↶ Undo last</button><button class="danger" onclick="clearRound()">Clear round</button></div>`;
- }else if(r.complete)h+=`<div class="history-note">Archived round — use the tabs above to review the other rounds.</div>`;
- document.getElementById('roundView').innerHTML=h;
+function allDrops(){return state.drops.every(x=>/^\d{1,3}$/.test(String(x))&&Number(x)>=0&&Number(x)<=189)}
+function gameStarted(){return state.currentRound>0}
+function active(){return state.rounds[state.currentRound-1]}
+function currentLocation(r){return r.moves.length?r.moves[r.moves.length-1]:r.start}
+function render(){renderSetup();if(gameStarted()){document.getElementById('setup').classList.add('hidden');document.getElementById('game').classList.remove('hidden');renderGame()}else{document.getElementById('setup').classList.remove('hidden');document.getElementById('game').classList.add('hidden')}updateEntry()}
+function renderSetup(){
+ document.getElementById('badge').textContent=gameStarted()?'ROUND '+state.currentRound:'SETUP';
+ document.getElementById('setupGrid').innerHTML=state.drops.map((v,i)=>`<button class="drop-input ${selectedDrop===i?'active':''} ${v?'done':''}" onclick="selectDrop(${i})"><small>Discovery ${i+1}</small><div class="drop-number">${v||'—'}</div><div class="drop-status">${selectedDrop===i?'ENTERING…':v?'SET':'Tap to enter'}</div></button>`).join('');
+ const ready=allDrops();
+ document.getElementById('startGrid').innerHTML=state.drops.map((v,i)=>`<button class="start-btn" ${ready?'':'disabled'} onclick="chooseStart(${i})">${v||'—'}</button>`).join('');
+ document.getElementById('startHint').textContent=!ready?'Enter all four locations first.':state.start?'Starting at '+state.start:'Tap Jack’s starting location';
 }
-function updateEntry(){const e=document.getElementById('entry');e.textContent=entry||'—';e.classList.toggle('placeholder',!entry);const editable=state.currentRound===viewedRound&&!activeRound().complete;document.getElementById('status').textContent=editable?(activeRound().moves.length>=MAX_MOVES?'15 movements reached':'Enter the next circle number'):'Viewing a completed round'}
-function digit(d){const r=activeRound();if(state.currentRound!==viewedRound||r.complete||r.moves.length>=MAX_MOVES||entry.length>=3)return;entry+=d;updateEntry()}
-function backspace(){if(entry){entry=entry.slice(0,-1);updateEntry()}}
+function selectDrop(i){if(gameStarted())return;selectedDrop=i;entry='';render()}
+function chooseStart(i){if(!allDrops())return;state.start=state.drops[i];state.currentRound=1;state.rounds[0].start=state.start;viewedRound=1;selectedDrop=null;entry='';save();render()}
+function renderGame(){
+ document.getElementById('badge').textContent='ROUND '+viewedRound;
+ document.getElementById('compactDrops').innerHTML=state.drops.map((v,i)=>`<button class="drop-input ${state.rounds.some((r,ri)=>ri<viewedRound&&r.reached===v)?'done':''}" onclick="focusDrop(${i})"><small>Discovery ${i+1}</small><div class="drop-number">${v}</div></button>`).join('');
+ document.getElementById('tabs').innerHTML=state.rounds.map((r,i)=>`<button class="tab ${viewedRound===i+1?'active':''}" ${i+1>state.currentRound?'disabled':''} onclick="viewRound(${i+1})">Round ${i+1}${r.complete?' ✓':''}</button>`).join('');
+ renderRound();
+}
+function focusDrop(i){const r=state.rounds[viewedRound-1];if(!r.complete&&viewedRound===state.currentRound){const n=state.drops[i];if(String(currentLocation(r))===String(n))dropBody(i);else toast('Jack is not at '+n)}}
+function viewRound(n){if(n>state.currentRound)return;viewedRound=n;entry='';selectedDrop=null;render()}
+function renderRound(){
+ const r=state.rounds[viewedRound-1],live=viewedRound===state.currentRound&&!r.complete;
+ document.getElementById('roundView').innerHTML=`
+ <div class="round-info"><span>${r.complete?'Completed':'Start: '+(r.start||'—')}</span><strong>${r.moves.length} / ${MAX}</strong></div>
+ <div class="track">${Array.from({length:MAX+1},(_,i)=>{
+   if(i===0)return `<div class="cell zero"><span class="turn">0</span><span class="num">${r.start||'—'}</span></div>`;
+   const n=r.moves[i-1]||'',possible=state.drops.includes(n),reached=r.complete&&String(n)===String(r.reached);
+   return `<div class="cell ${!n?'empty':''} ${live&&i===r.moves.length+1?'current':''} ${possible?'possible':''} ${reached?'reached':''}"><span class="turn">${i}</span><span class="num">${n||'—'}</span>${possible?`<span class="marker">${reached?'DROPPED':'DROP'}</span>`:''}</div>`;
+ }).join('')}</div>
+ ${live?renderDropActions(r):`<div class="history-note">Body part dropped at ${r.reached||'—'} · archived for review</div>`}
+ <div class="bottom-actions">${live?'<button onclick="undo()">↶ Undo last</button>':''}<button class="danger" onclick="resetGame()">Reset game</button></div>`;
+}
+function renderDropActions(r){
+ const loc=currentLocation(r);
+ return `<div class="drop-action"><div class="drop-action-title">Body part dropped here?</div><div class="drop-row">${state.drops.map((d,i)=>`<button class="drop-btn ${String(loc)===String(d)?'':'disabled'}" ${String(loc)===String(d)?'':'disabled'} onclick="dropBody(${i})">D${i+1} · ${d}</button>`).join('')}</div></div>`;
+}
+function updateEntry(){const e=document.getElementById('entry');e.textContent=entry||'—';e.classList.toggle('placeholder',!entry);let activeInput=!gameStarted()?selectedDrop!==null:(viewedRound===state.currentRound&&!active().complete);document.getElementById('addBtn').textContent=!gameStarted()?'SET LOCATION':'ADD MOVEMENT';document.getElementById('status').textContent=!gameStarted()?(selectedDrop===null?'Tap a Discovery box first':'Enter its circle number'):activeInput?(active().moves.length>=MAX?'15 movements reached':'Enter the next circle number'):'Viewing completed round'}
+function digit(d){
+ if(!gameStarted()){
+   if(selectedDrop===null||entry.length>=3)return;
+   entry+=d;updateEntry();return;
+ }
+ const r=active();if(viewedRound!==state.currentRound||r.complete||r.moves.length>=MAX||entry.length>=3)return;
+ entry+=d;updateEntry();
+}
+function backspace(){entry=entry.slice(0,-1);updateEntry()}
 function clearEntry(){entry='';updateEntry()}
-function addMove(){
- const r=activeRound();
- if(state.currentRound!==viewedRound||r.complete)return;
+function addMovement(){
+ if(!gameStarted()){
+   if(selectedDrop===null){toast('Tap a Discovery box first');return}
+   if(!entry){toast('Enter a circle number');return}
+   const n=Number(entry);if(!Number.isInteger(n)||n<0||n>189){toast('Use a number from 0–189');return}
+   state.drops[selectedDrop]=String(n);entry='';save();render();return;
+ }
+ const r=active();if(viewedRound!==state.currentRound||r.complete)return;
  if(!entry){toast('Enter a circle number');return}
- const n=Number(entry);
- if(!Number.isInteger(n)||n<0||n>189){toast('Use a number from 0–189');return}
- if(r.moves.length>=MAX_MOVES){toast('15 movements reached');return}
- if(r.moves.length&&String(r.moves[r.moves.length-1])===String(n)){toast('Jack must move to a different circle');return}
- r.moves.push(String(n));entry='';save();renderRound();updateEntry();
- if(r.moves.length===MAX_MOVES)toast('15 movements reached');
+ const n=Number(entry);if(!Number.isInteger(n)||n<0||n>189){toast('Use a number from 0–189');return}
+ if(r.moves.length>=MAX){toast('15 movements reached');return}
+ if(r.moves.length&&String(currentLocation(r))===String(n)){toast('Jack must move to a different circle');return}
+ r.moves.push(String(n));entry='';save();render();
+ if(r.moves.length===MAX)toast('15 movements reached');
 }
 function dropBody(i){
- const r=activeRound(),target=state.discoveries[i];
- if(state.currentRound!==viewedRound||r.complete)return;
- if(!target){toast('Enter this Discovery Location first');return}
- if(String(currentLocation())!==String(target)){toast('Jack is not at that Discovery Location');return}
- if(i===0){toast('Discovery 1 is the starting location');return}
- if(state.rounds.some((rr,ri)=>ri<viewedRound&&String(rr.reached)===String(target))){toast('That Discovery Location was already used');return}
+ const r=active(),target=state.drops[i],loc=currentLocation(r);
+ if(viewedRound!==state.currentRound||r.complete)return;
+ if(String(loc)!==String(target)){toast('Jack is not at '+target);return}
+ if(i===0&&viewedRound===1){toast('Discovery 1 is not a later drop location');return}
+ if(state.rounds.some((rr,ri)=>ri<viewedRound&&String(rr.reached)===String(target))){toast('That location has already been used');return}
  r.complete=true;r.reached=String(target);save();
- if(state.currentRound<3){state.currentRound++;viewedRound=state.currentRound;entry='';save();render();toast('Body part dropped — Round '+state.currentRound+' started')}
- else{render();toast('All four body parts dropped — Jack wins!')}
+ if(state.currentRound<3){
+   state.currentRound++;
+   state.rounds[state.currentRound-1].start=r.reached;
+   viewedRound=state.currentRound;entry='';save();render();toast('Body part dropped — next round started');
+ }else{entry='';save();render();toast('All body parts dropped — Jack wins!')}
 }
-function undo(){const r=activeRound();if(!r.moves.length){toast('Nothing to undo');return}r.moves.pop();entry='';save();render()}
-function clearRound(){if(!confirm('Clear every movement in this round?'))return;const r=activeRound();r.moves=[];r.complete=false;r.reached='';entry='';save();render()}
-function toast(t){const x=document.getElementById('toast');x.textContent=t;x.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>x.style.display='none',1500)}
-document.addEventListener('keydown',e=>{if(e.key>='0'&&e.key<='9')digit(e.key);else if(e.key==='Backspace')backspace();else if(e.key==='Escape')clearEntry();else if(e.key==='Enter')addMove()});
+function undo(){const r=active();if(!r.moves.length){toast('Nothing to undo');return}r.moves.pop();entry='';save();render()}
+function resetGame(){if(!confirm('Reset the whole game? This will erase all drop locations and movement history.'))return;state=newGame();entry='';selectedDrop=null;viewedRound=1;save();render()}
+document.addEventListener('keydown',e=>{if(e.key>='0'&&e.key<='9')digit(e.key);else if(e.key==='Backspace')backspace();else if(e.key==='Escape')clearEntry();else if(e.key==='Enter')addMovement()});
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 render();
 </script>
