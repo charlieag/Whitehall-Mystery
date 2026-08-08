@@ -36,9 +36,12 @@ main{max-width:650px;margin:auto;padding:8px 10px 345px}
 .round-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:6px}
 .tab{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:9px;padding:7px 3px;font-size:11px;font-weight:850}
 .tab.active{background:var(--gold);border-color:var(--gold);color:#111}.tab:disabled{opacity:.3}
-.round-info{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 9px;margin-top:6px;font-size:11px}
+.round-info{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin-top:6px;font-size:10px}
+.progress-mini{height:6px;background:#090909;border-radius:99px;overflow:hidden}.progress-mini i{display:block;height:100%;background:var(--gold)}
+.start-cell-mini{min-width:54px;padding:4px 7px;border:1px solid #777;border-radius:7px;background:#181818;color:var(--gold);font-weight:900;text-align:center}
+.start-cell-mini small{display:block;font-size:7px;color:#888}.start-cell-mini b{font-size:15px}
 .round-info strong{font-size:14px}.start-box{color:var(--gold);font-weight:850}
-.start-row{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:6px}.start-row .cell{grid-column:1}.track{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:6px}
+.track{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:6px}
 .cell{min-height:54px;background:var(--card);border:1px solid var(--line);border-radius:8px;position:relative;display:flex;align-items:center;justify-content:center}
 .cell .turn{position:absolute;top:3px;left:4px;font-size:7px;color:#666;font-weight:800}.cell .num{font-size:17px;font-weight:900;margin-top:5px}
 .cell.zero{border-color:#777;background:#181818}.cell.zero .turn{color:var(--gold)}.cell.zero .num{font-size:19px}
@@ -56,7 +59,7 @@ main{max-width:650px;margin:auto;padding:8px 10px 345px}
 .status{text-align:center;min-height:12px;color:var(--muted);font-size:9px;margin-top:3px}
 .toast{position:fixed;left:50%;bottom:330px;transform:translateX(-50%);z-index:50;background:#eee;color:#111;border-radius:9px;padding:8px 11px;font-size:11px;font-weight:900;display:none;white-space:nowrap;box-shadow:0 4px 18px #0008}
 .hidden{display:none!important}
-@media(min-width:520px){.track{grid-template-columns:repeat(5,1fr)}main{padding-bottom:315px}}
+@media(min-width:520px){main{padding-bottom:315px}}
 </style>
 </head>
 <body>
@@ -101,15 +104,29 @@ main{max-width:650px;margin:auto;padding:8px 10px 345px}
 const KEY='whitehall-jack-v8',MAX=15;
 let state=load()||newGame(),entry='',selectedDrop=null,viewedRound=1;
 
-function newGame(){return{drops:['','','',''],start:'',rounds:[{start:'',moves:[],complete:false,reached:''},{start:'',moves:[],complete:false,reached:''},{start:'',moves:[],complete:false,reached:''}],currentRound:0}}
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));return s&&Array.isArray(s.drops)&&Array.isArray(s.rounds)&&s.rounds.length===3?s:null}catch(e){return null}}
+function newGame(){return{drops:['','','',''],start:'',usedDrops:[],rounds:[{start:'',moves:[],complete:false,reached:''},{start:'',moves:[],complete:false,reached:''},{start:'',moves:[],complete:false,reached:''}],currentRound:0}}
+function load(){
+ try{
+  const s=JSON.parse(localStorage.getItem(KEY));
+  if(!s||!Array.isArray(s.drops)||!Array.isArray(s.rounds)||s.rounds.length!==3)return null;
+  if(!Array.isArray(s.usedDrops))s.usedDrops=s.rounds.map(r=>String(r.reached||'')).filter(Boolean);
+  return s;
+ }catch(e){return null}
+}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 function allDrops(){return state.drops.every(x=>/^\d{1,3}$/.test(String(x))&&Number(x)>=0&&Number(x)<=189)}
 function active(){return state.rounds[state.currentRound-1]}
 function currentLocation(r){return r.moves.length?r.moves[r.moves.length-1]:r.start}
-function usedDropLocations(){return state.rounds.map(r=>String(r.reached)).filter(Boolean)}
-function unusedDropIndexAtLocation(loc){const used=usedDropLocations();return state.drops.findIndex(d=>String(d)===String(loc)&&!used.includes(String(d)))}
+function usedDropLocations(){
+ const history=state.rounds.map(r=>String(r.reached||'')).filter(Boolean);
+ const stored=Array.isArray(state.usedDrops)?state.usedDrops.map(String):[];
+ return [...new Set([...stored,...history])];
+}
+function unusedDropIndexAtLocation(loc){
+ const used=usedDropLocations();
+ return state.drops.findIndex(d=>String(d)===String(loc)&&!used.includes(String(d)));
+}
 function render(){renderSetup();if(state.currentRound){document.getElementById('setup').classList.add('hidden');document.getElementById('game').classList.remove('hidden');renderGame()}else{document.getElementById('setup').classList.remove('hidden');document.getElementById('game').classList.add('hidden')}updateEntry()}
 function renderSetup(){
  document.getElementById('badge').textContent=state.currentRound?'ROUND '+state.currentRound:'SETUP';
@@ -154,32 +171,58 @@ function renderRound(){
    return `<div class="drop-prompt">Jack is at Discovery ${idx+1} (${state.drops[idx]}) — tap it above if the body part is dropped here.</div>`;
  })():'';
  document.getElementById('roundView').innerHTML=`
- <div class="round-info"><span class="start-box">0 = ${r.start||'—'}</span><strong>${r.moves.length} / ${MAX}</strong></div>
- <div class="start-row">${startCell}</div>
+ <div class="round-info">
+   <div class="start-cell-mini"><small>0 · START</small><b>${r.start||'—'}</b></div>
+   <div class="progress-mini"><i style="width:${Math.min(100,r.moves.length/MAX*100)}%"></i></div>
+   <strong>${r.moves.length} / ${MAX}</strong>
+ </div>
  <div class="track">${movementCells}</div>
  ${prompt}
  ${!live?`<div class="history-note">Body part dropped at ${r.reached||'—'} · archived for review</div>`:''}
  <div class="bottom-actions">${live?'<button onclick="undo()">↶ Undo last</button>':''}<button class="danger" onclick="resetGame()">Reset game</button></div>`;
 }
 function tryDrop(i){
- const r=state.rounds[state.currentRound-1],target=state.drops[i];
+ const r=state.rounds[state.currentRound-1],target=String(state.drops[i]);
  if(viewedRound!==state.currentRound||r.complete)return;
  if(r.moves.length===0){toast('You must move before dropping a body part');return}
- if(usedDropLocations().includes(String(target))){toast('That body-drop location has already been used');render();return}
- if(String(currentLocation(r))!==String(target)){toast('Jack is not at '+target);return}
+ if(usedDropLocations().includes(target)){
+   toast('That body-drop location has already been used');
+   render();
+   return;
+ }
+ if(String(currentLocation(r))!==target){toast('Jack is not at '+target);return}
  dropBody(i);
 }
 function dropBody(i){
- const r=active(),target=state.drops[i];
- if(usedDropLocations().includes(String(target))){toast('That body-drop location has already been used');render();return}
- if(String(currentLocation(r))!==String(target)){toast('Jack is not at '+target);return}
- r.complete=true;r.reached=String(target);save();
+ const r=active(),target=String(state.drops[i]);
+ const used=usedDropLocations();
+ if(used.includes(target)){
+   toast('That body-drop location has already been used');
+   render();
+   return;
+ }
+ if(String(currentLocation(r))!==target){
+   toast('Jack is not at '+target);
+   return;
+ }
+ if(!Array.isArray(state.usedDrops))state.usedDrops=[];
+ state.usedDrops.push(target);
+ r.complete=true;
+ r.reached=target;
+ save();
  if(state.currentRound<3){
    state.currentRound++;
-   state.rounds[state.currentRound-1].start=r.reached;
-   viewedRound=state.currentRound;entry='';save();render();toast('Body part dropped — next round started');
+   state.rounds[state.currentRound-1].start=target;
+   viewedRound=state.currentRound;
+   entry='';
+   save();
+   render();
+   toast('Body part dropped — next round started');
  }else{
-   entry='';save();render();toast('All body parts dropped — Jack wins!');
+   entry='';
+   save();
+   render();
+   toast('All body parts dropped — Jack wins!');
  }
 }
 function addAction(){
